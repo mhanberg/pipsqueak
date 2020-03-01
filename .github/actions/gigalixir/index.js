@@ -33,10 +33,12 @@ async function isNextReleaseHealthy(release, app) {
 }
 
 async function waitForNewRelease(oldRelease, app) {
-  if (!await isNextReleaseHealthy(oldRelease + 1, app)) {
+  if (await isNextReleaseHealthy(oldRelease + 1, app)) {
+    return await Promise.resolve(true);
+  } else {
     await wait(500);
 
-    waitForNewRelease(oldRelease, app);
+    await waitForNewRelease(oldRelease, app);
   } 
 }
 
