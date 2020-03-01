@@ -84,3 +84,5 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 400 ~/.ssh/id_rsa
           gigalixir ps:migrate -a pipsqueak
+          echo "$?"
+          exit "$?"
