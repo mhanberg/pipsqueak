@@ -5,17 +5,35 @@ const path = require('path');
 function wait(milliseconds) {
   return new Promise(resolve => {
     if (typeof(milliseconds) !== 'number') { 
-      throw new Error('milleseconds not a number'); 
+      throw new Error('milliseconds not a number'); 
     }
+
+    core.info("Waiting...");
 
     setTimeout(() => resolve("done!"), milliseconds)
   });
 }
 
-async function waitForNewRelease(oldRelease, app) {
-  const currentRelease = await getCurrentRelease(app);
+async function isNextReleaseHealthy(release, app) {
+  let releasesOutput = '';
 
-  if (oldRelease === currentRelease) {
+  const options = {
+    listeners: {
+      stdout: data => {
+        releasesOutput += data.toString();
+      }
+    }
+  };
+
+  await exec.exec(`gigalixir ps -a ${app}`, [], options);
+
+  return JSON.parse(releasesOutput)
+           .pods
+           .some(pod => parseInt(pod.version) === release && pod.status === "Healthy");
+}
+
+async function waitForNewRelease(oldRelease, app) {
+  if (await isNextReleaseHealthy(oldRelease + 1, app)) {
     await wait(500);
 
     waitForNewRelease(oldRelease, app);
@@ -35,8 +53,7 @@ async function getCurrentRelease(app) {
 
   await exec.exec(`gigalixir releases -a ${app}`, [], options);
 
-
-  const currentRelease = JSON.parse(releasesOutput)[0].version;
+  const currentRelease = parseInt(JSON.parse(releasesOutput)[0].version);
 
   return currentRelease;
 }
