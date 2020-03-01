@@ -77,3 +77,10 @@ jobs:
       - run: gigalixir login -e "${{ secrets.GIGALIXIR_USERNAME }}" -y -p "${{ secrets.GIGALIXIR_PASSWORD }}"
       - run: gigalixir git:remote pipsqueak
       - run: git push -f gigalixir HEAD:refs/heads/master
+      - run: sleep 5
+      - run: |
+          mkdir ~/.ssh
+          printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 400 ~/.ssh/id_rsa
+          gigalixir ps:migrate -a pipsqueak
