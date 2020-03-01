@@ -33,7 +33,7 @@ async function isNextReleaseHealthy(release, app) {
 }
 
 async function waitForNewRelease(oldRelease, app) {
-  if (await isNextReleaseHealthy(oldRelease + 1, app)) {
+  if (!await isNextReleaseHealthy(oldRelease + 1, app)) {
     await wait(500);
 
     waitForNewRelease(oldRelease, app);
