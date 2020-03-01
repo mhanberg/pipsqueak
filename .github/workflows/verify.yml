@@ -1,0 +1,46 @@
+on: push
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:12
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: pipsqueak_test
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-elixir@v1
+        with:
+          otp-version: 22.2.7
+          elixir-version: 1.10.1
+
+      - run: |
+          mix deps.get
+          (cd assets && yarn)
+
+      - run: mix format --check-formatted
+      - run: mix test
+
+  deploy:
+    needs: verify
+    if: ${{ github.ref }} == "master"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - run: sudo pip install gigalixir --ignore-installed six
+      - run: gigalixir login -e "${{ secrets.GIGALIXIR_USERNAME }}" -y -p "${{ secrets.GIGALIXIR_PASSWORD }}"
+      - run: gigalixir git:remote pipsqueak
+      - run: git push -f gigalixir HEAD:refs/heads/master
