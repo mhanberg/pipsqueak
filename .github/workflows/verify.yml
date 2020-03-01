@@ -73,16 +73,9 @@ jobs:
           ref: master
           fetch-depth: 0
 
-      - run: sudo pip install gigalixir --ignore-installed six
-      - run: gigalixir login -e "${{ secrets.GIGALIXIR_USERNAME }}" -y -p "${{ secrets.GIGALIXIR_PASSWORD }}"
-      - run: gigalixir git:remote pipsqueak
-      - run: git push -f gigalixir HEAD:refs/heads/master
-      - run: sleep 5
-      - run: |
-          mkdir ~/.ssh
-          printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 400 ~/.ssh/id_rsa
-          gigalixir ps:migrate -a pipsqueak
-          echo "$?"
-          exit "$?"
+      - uses: ./.github/actions/gigalixir
+        with:
+          GIGALIXIR_USERNAME: ${{ secrets.GIGALIXIR_USERNAME }}
+          GIGALIXIR_PASSWORD: ${{ secrets.GIGALIXIR_PASSWORD }}
+          GIGALIXIR_APP: pipsqueak
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
