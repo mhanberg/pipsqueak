@@ -27,16 +27,17 @@ async function isNextReleaseHealthy(release, app) {
 
   await exec.exec(`gigalixir ps -a ${app}`, [], options);
 
-  return JSON.parse(releasesOutput)
-           .pods
-           .some(pod => parseInt(pod.version) === release && pod.status === "Healthy");
+  const pods = JSON.parse(releasesOutput).pods;
+  const pod = pods[0];
+
+  return pods.length === 1 && parseInt(pod.version) === release && pod.status === "Healthy";
 }
 
 async function waitForNewRelease(oldRelease, app) {
   if (await isNextReleaseHealthy(oldRelease + 1, app)) {
     return await Promise.resolve(true);
   } else {
-    await wait(500);
+    await wait(1000);
 
     await waitForNewRelease(oldRelease, app);
   } 
