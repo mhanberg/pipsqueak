@@ -33,13 +33,17 @@ async function isNextReleaseHealthy(release, app) {
   return pods.length === 1 && parseInt(pod.version) === release && pod.status === "Healthy";
 }
 
-async function waitForNewRelease(oldRelease, app) {
+async function waitForNewRelease(oldRelease, app, multiplier) {
   if (await isNextReleaseHealthy(oldRelease + 1, app)) {
     return await Promise.resolve(true);
   } else {
-    await wait(1000);
+    if (multiplier <= 5) {
+      await wait(Math.pow(2000, multiplier));
 
-    await waitForNewRelease(oldRelease, app);
+      await waitForNewRelease(oldRelease, app, multiplier + 1);
+    } else {
+      throw "Taking too long for new release to deploy";
+    }
   } 
 }
 
@@ -86,7 +90,7 @@ async function run() {
     await exec.exec(path.join(__dirname, "../bin/add-private-key"), [sshPrivateKey]),
 
     core.info("Waiting for new release to deploy");
-    await waitForNewRelease(currentRelease, gigalixirApp);
+    await waitForNewRelease(currentRelease, gigalixirApp, 1);
 
     try {
       core.info("Running migrations");
