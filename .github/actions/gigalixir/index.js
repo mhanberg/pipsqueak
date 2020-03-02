@@ -25,7 +25,7 @@ async function isNextReleaseHealthy(release, app) {
     }
   };
 
-  core.group("Getting current replicas", async () => {
+  await core.group("Getting current replicas", async () => {
     await exec.exec(`gigalixir ps -a ${app}`, [], options);
   });
 
@@ -60,7 +60,7 @@ async function getCurrentRelease(app) {
     }
   };
 
-  core.group("Getting current release", async () => {
+  await core.group("Getting current release", async () => {
     await exec.exec(`gigalixir releases -a ${app}`, [], options);
   });
 
@@ -76,32 +76,32 @@ async function run() {
     const sshPrivateKey = core.getInput('SSH_PRIVATE_KEY', { required: true });
     const gigalixirApp = core.getInput('GIGALIXIR_APP', { required: true });
 
-    core.group("Installing gigalixir", async () => {
+    await core.group("Installing gigalixir", async () => {
       await exec.exec('sudo pip install gigalixir --ignore-installed six')
     });
 
-    core.group("Logging in to gigalixir", async () => {
+    await core.group("Logging in to gigalixir", async () => {
       await exec.exec(`gigalixir login -e "${gigalixirUsername}" -y -p "${gigalixirPassword}"`)
     });
 
-    core.group("Setting git remote for gigalixir", async () => {
+    await core.group("Setting git remote for gigalixir", async () => {
       await exec.exec(`gigalixir git:remote ${gigalixirApp}`);
     });
 
-    const currentRelease = core.group("Getting current release", async () => {
+    const currentRelease = await core.group("Getting current release", async () => {
       return await getCurrentRelease(gigalixirApp);
     });
     core.info(`The current release is ${currentRelease}`);
 
-    core.group("Deploying to gigalixir", async () => {
+    await core.group("Deploying to gigalixir", async () => {
       await exec.exec("git push -f gigalixir HEAD:refs/heads/master");
     });
 
-    core.group("Adding private key to gigalixir", async () => {
+    await core.group("Adding private key to gigalixir", async () => {
       await exec.exec(path.join(__dirname, "../bin/add-private-key"), [sshPrivateKey]);
     });
 
-    core.group("Waiting for new release to deploy", async () => {
+    await core.group("Waiting for new release to deploy", async () => {
       await waitForNewRelease(currentRelease, gigalixirApp, 1);
     });
 
@@ -111,7 +111,7 @@ async function run() {
       });
     } catch (error) {
       core.warning(`Migration failed, rolling back to the previous release: ${currentRelease}`);
-      core.group("Rolling back", async () => {
+      await core.group("Rolling back", async () => {
         await exec.exec(`gigalixir releases:rollback -a ${gigalixirApp}`)
       });
 
