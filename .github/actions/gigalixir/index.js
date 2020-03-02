@@ -2,15 +2,15 @@ const core = require('@actions/core');
 const exec = require('@actions/exec');
 const path = require('path');
 
-function wait(milliseconds) {
+function wait(seconds) {
   return new Promise(resolve => {
-    if (typeof(milliseconds) !== 'number') { 
-      throw new Error('milliseconds not a number'); 
+    if (typeof(seconds) !== 'number') { 
+      throw new Error('seconds not a number'); 
     }
 
-    core.info(`Waiting ${milliseconds / 1000} seconds...`);
+    core.info(`Waiting ${seconds} seconds...`);
 
-    setTimeout(() => resolve("done!"), milliseconds)
+    setTimeout(() => resolve("done!"), seconds * 1000)
   });
 }
 
@@ -38,7 +38,7 @@ async function waitForNewRelease(oldRelease, app, multiplier) {
     return await Promise.resolve(true);
   } else {
     if (multiplier <= 5) {
-      await wait(Math.pow(2000, multiplier));
+      await wait(Math.pow(2, multiplier));
 
       await waitForNewRelease(oldRelease, app, multiplier + 1);
     } else {
