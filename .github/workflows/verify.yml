@@ -73,7 +73,7 @@ jobs:
           ref: master
           fetch-depth: 0
 
-      - uses: ./.github/actions/gigalixir
+      - uses: mhanberg/gigalixir-action@master
         with:
           GIGALIXIR_USERNAME: ${{ secrets.GIGALIXIR_USERNAME }}
           GIGALIXIR_PASSWORD: ${{ secrets.GIGALIXIR_PASSWORD }}
