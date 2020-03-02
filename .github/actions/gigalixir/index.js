@@ -8,7 +8,7 @@ function wait(milliseconds) {
       throw new Error('milliseconds not a number'); 
     }
 
-    core.info("Waiting...");
+    core.info(`Waiting ${milliseconds / 1000} seconds...`);
 
     setTimeout(() => resolve("done!"), milliseconds)
   });
