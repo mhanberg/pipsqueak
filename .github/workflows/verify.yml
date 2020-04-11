@@ -73,7 +73,7 @@ jobs:
           ref: another-branch
           fetch-depth: 0
 
-      - uses: mhanberg/gigalixir-action@deploy-any-branch
+      - uses: mhanberg/gigalixir-action@v0.2.1
         with:
           username: ${{ secrets.GIGALIXIR_USERNAME }}
           password: ${{ secrets.GIGALIXIR_PASSWORD }}
