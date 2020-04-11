@@ -63,7 +63,7 @@ jobs:
 
   deploy:
     needs: verify
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/another-branch'
 
     runs-on: ubuntu-latest
 
