@@ -70,7 +70,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: master
+          ref: another-branch
           fetch-depth: 0
 
       - uses: mhanberg/gigalixir-action@deploy-any-branch
