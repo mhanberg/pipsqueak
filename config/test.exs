@@ -12,7 +12,17 @@ config :pipsqueak, Pipsqueak.Repo,
 # you can enable the server option below.
 config :pipsqueak, PipsqueakWeb.Endpoint,
   http: [port: 4002],
-  server: false
+  server: true
+
+config :pipsqueak, :sql_sandbox, true
+
+config :wallaby,
+  driver: Wallaby.Experimental.Chrome,
+  chromedriver: [
+    headless: false,
+    path: "/usr/local/bin/geckodriver"
+  ],
+  otp_app: :pipsqueak
 
 # Print only warnings and errors during test
 config :logger, level: :warn

@@ -10,6 +10,11 @@ use Mix.Config
 config :pipsqueak,
   ecto_repos: [Pipsqueak.Repo]
 
+config :phoenix, :template_engines,
+  exs: Temple.Engine,
+  lexs: Temple.LiveViewEngine,
+  leex: Phoenix.LiveView.Engine
+
 # Configures the endpoint
 config :pipsqueak, PipsqueakWeb.Endpoint,
   url: [host: "localhost"],

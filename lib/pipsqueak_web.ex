@@ -24,6 +24,7 @@ defmodule PipsqueakWeb do
       import Plug.Conn
       import PipsqueakWeb.Gettext
       alias PipsqueakWeb.Router.Helpers, as: Routes
+      import Phoenix.LiveView.Controller
     end
   end
 
@@ -42,6 +43,14 @@ defmodule PipsqueakWeb do
       import PipsqueakWeb.ErrorHelpers
       import PipsqueakWeb.Gettext
       alias PipsqueakWeb.Router.Helpers, as: Routes
+      import Phoenix.LiveView.Helpers
+    end
+  end
+
+  def live do
+    quote do
+      use Temple, :live
+      use Phoenix.LiveView
     end
   end
 
@@ -50,6 +59,7 @@ defmodule PipsqueakWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+      import Phoenix.LiveView.Router
     end
   end
 

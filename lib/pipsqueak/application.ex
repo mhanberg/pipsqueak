@@ -8,12 +8,9 @@ defmodule Pipsqueak.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
-      # Start the Ecto repository
       Pipsqueak.Repo,
-      # Start the endpoint when the application starts
+      PipsqueakWeb.Telemetry,
       PipsqueakWeb.Endpoint
-      # Starts a worker by calling: Pipsqueak.Worker.start_link(arg)
-      # {Pipsqueak.Worker, arg},
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
